@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  storage: './storage'
+  storage: './storage',
+  apiUrl: 'https://jsonplaceholder.typicode.com'
 };
 
 /*
