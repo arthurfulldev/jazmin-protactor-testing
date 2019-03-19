@@ -89,12 +89,12 @@ describe('UsersService', () => {
         let req;
         beforeEach(() => {
             delete usersMock[1].id;
-            service.postUser(usersMock[1]).subscribe( userCreated => {
+            service.postUser(usersMock[1]).subscribe(userCreated => {
                 theUserCreated = userCreated;
             },
-            error => {
-                theError = error;
-            });
+                error => {
+                    theError = error;
+                });
             req = httpMock.expectOne({
                 url: `${environment.apiUrl}/users`,
                 method: 'POST'
@@ -103,11 +103,10 @@ describe('UsersService', () => {
         });
 
         it('Response when the server fail', () => {
-            delete usersMock[1].id;
-            service.postUser(usersMock[1]).subscribe( userCreated => {},
-            error => {
-                theError = error;
-            });
+            service.postUser(usersMock[1]).subscribe(userCreated => { },
+                error => {
+                    theError = error;
+                });
             req = httpMock.expectOne({
                 url: `${environment.apiUrl}/users`,
                 method: 'POST'
@@ -122,6 +121,50 @@ describe('UsersService', () => {
 
         it('The reponse the post must be equals to userMock 1', () => {
             expect(theUserCreated).toEqual(usersMock[1]);
+        });
+    });
+
+    describe('testing the function put', () => {
+        let theUpdateUser: User;
+        let req;
+
+        beforeEach(() => {
+            service.putUser(2, usersMock[3]).subscribe(updateUser => {
+                theUpdateUser = updateUser;
+            });
+            req = httpMock.expectOne({
+                url: `${environment.apiUrl}/users/2`,
+                method: 'PUT'
+            });
+            req.flush(usersMock[3]);
+        });
+
+        it('Must be request PUT', () => {
+            expect(req.request.method).toEqual('PUT');
+        });
+
+        it('Should be return user equals to usersMock[3]', () => {
+            expect(theUpdateUser).toBe(usersMock[3]);
+        });
+    });
+
+    describe('Test the deleteUser function', () => {
+        let response;
+        let req;
+        beforeEach( () => {
+            service.deleteUser(7).subscribe( delUser => {
+                response = delUser;
+            });
+            req = httpMock.expectOne(`${environment.apiUrl}/users/7`);
+            req.flush({ code: 200, msg: 'Usuario eliminado...'});
+        });
+
+        it('Verify delete user', () => {
+            expect(response.code).toBe(200);
+        });
+
+        it('Must be request DELETE type', () => {
+            expect(req.request.method).toBe('DELETE');
         });
     });
 });
